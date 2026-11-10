@@ -94,6 +94,20 @@ const STEAK = {
   ],
 };
 
+// Smash Burger laut Lieferando-Shop "Dream'z Burger" (gleiche Adresse). Preise noch offen.
+const BURGER = {
+  id: "burger",
+  title: "Smash Burger",
+  badge: "Nur hier",
+  items: [
+    { name: "Smash Burger", desc: "Der Klassiker mit Cheddar, Ketchup, Senf, gewürfelten Zwiebeln und Gewürzgurken", price: null },
+    { name: "Double Smash Burger", desc: "Mit zwei Beef Pattys", price: null },
+    { name: "Double Smash Burger Special", desc: "Zwei Beef Pattys, geschmorte Zwiebeln und Spezial-Burgersoße", price: null },
+    { name: "Chili Cheese Smash", desc: "Mit pikanter Käsesoße und Jalapeños", price: null },
+    { name: "Double Chili Cheese Smash", desc: "Zwei Beef Pattys, pikante Käsesoße und Jalapeños", price: null },
+  ],
+};
+
 const STORES = {
   mexikoplatz: {
     slug: "mexikoplatz",
@@ -125,7 +139,7 @@ const STORES = {
   "krumme-lanke": {
     slug: "krumme-lanke",
     name: "Krumme Lanke",
-    fullName: "Dream'z Kebab Krumme Lanke",
+    fullName: "Dream'z Kebab & Burger Krumme Lanke",
     tagline: "Mit Sitzplätzen und Kinderspielecke.",
     station: { type: "U", line: "U3", label: "U Krumme Lanke" },
     street: "Fischerhüttenstraße 89",
@@ -146,6 +160,6 @@ const STORES = {
       { kind: "link", title: "Liefern lassen mit Wolt", text: "Bequem nach Hause bestellen.", url: "https://wolt.com/de/deu/berlin/restaurant/dreamz-kebab-burger" },
       { kind: "phone", title: "Anrufen & abholen", text: "Ruf kurz an, wir machen alles fertig." },
     ],
-    menu: [STEAK, ...BASE_MENU, DRINKS],
+    menu: [STEAK, BURGER, ...BASE_MENU, DRINKS],
   },
 };
