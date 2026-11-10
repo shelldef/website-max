@@ -6,6 +6,8 @@
   const DAY_NAMES = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
   const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0];
   const STORAGE_KEY = "dreamz-filiale";
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const behavior = reduced ? "auto" : "smooth";
 
   // ---------- Zeit & Öffnungsstatus (immer Berliner Zeit) ----------
   const toMin = (t) => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
@@ -67,7 +69,7 @@
     return opt.url;
   }
   const ICONS = {
-    whatsapp: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.4.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>',
+    whatsapp: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.100 2.7 11.8 11.8 0 0 0 4.5 4c1.700.7 2.400.8 3.200.6.5-.1 1.500-.6 1.700-1.200.2-.6.2-1.100.2-1.200-.1-.1-.3-.2-.5-.3Z"/></svg>',
     phone: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>',
     link: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 7h13l-1.5 9h-10L3 7Zm4 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm7 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2ZM16 7l1-3h3"/></svg>',
     map: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
@@ -88,43 +90,46 @@
     if (typeof dlg.showModal === "function") dlg.showModal();
     else dlg.setAttribute("open", "");
   }
-  // Klick auf den Hintergrund schließt das Sheet
   $("#order-sheet").addEventListener("click", (e) => { if (e.target.id === "order-sheet") e.target.close(); });
 
-  // ---------- Filialansicht rendern ----------
+  // ---------- Speisekarte ----------
   function renderMenu(store) {
-    const cats = $(".cats");
-    cats.innerHTML = store.menu.map((c) => `<a href="#cat-${c.id}" data-cat="${c.id}">${esc(c.title)}</a>`).join("");
+    $(".cats").innerHTML = store.menu.map((c) => `<a href="#cat-${c.id}" data-cat="${c.id}">${esc(c.title)}</a>`).join("");
 
     $(".menu").innerHTML = store.menu.map((c) => {
       let body;
       if (c.sizes) {
         body = `<div class="size-head"><span></span>${c.sizes.map((s) => `<span>${esc(s)}</span>`).join("")}</div>
           <ul class="rows rows-sizes">${c.items.map((it) => `<li><span class="row-name">${esc(it.name)}</span>${it.prices.map((p) => `<span class="row-price">${p} €</span>`).join("")}</li>`).join("")}</ul>`;
-      } else if (c.id === "klassiker") {
+      } else if (c.tiles) {
         body = `<div class="tiles">${c.items.map((it) => `
-          <article class="tile${it.highlight ? " tile-hl" : ""}">
-            <span class="tile-emoji" aria-hidden="true">${it.emoji || ""}</span>
+          <article class="tile">
             <h4>${esc(it.name)}</h4>
             <p>${esc(it.desc || "")}</p>
-            <p class="tile-price">${it.price} €</p>
+            <span class="price-tag"><small>je</small> ${it.price} €</span>
             ${it.extras ? `<ul class="tile-extras">${it.extras.map(([n, p]) => `<li>${esc(n)} <span>${p} €</span></li>`).join("")}</ul>` : ""}
           </article>`).join("")}</div>`;
       } else {
         body = `<ul class="rows">${c.items.map((it) => `
           <li>
-            <span class="row-main"><span class="row-name">${it.emoji ? `<span aria-hidden="true">${it.emoji}</span> ` : ""}${esc(it.name)}</span>${it.desc ? `<span class="row-desc">${esc(it.desc)}</span>` : ""}</span>
+            <span class="row-main"><span class="row-name">${esc(it.name)}</span>${it.desc ? `<span class="row-desc">${esc(it.desc)}</span>` : ""}</span>
+            <span class="row-fill" aria-hidden="true"></span>
             <span class="row-price${it.price ? "" : " row-price-ask"}">${it.price ? `${it.price} €` : "Preis im Laden"}</span>
           </li>`).join("")}</ul>`;
       }
-      return `<section class="cat${c.badge ? " cat-featured" : ""}" id="cat-${c.id}">
+      const note = c.fillings
+        ? `<p class="cat-note">Mit Salat und Soße. Füllung nach Wahl:<br><strong>${FILLINGS.map(esc).join(" · ")}</strong></p>`
+        : c.note ? `<p class="cat-note">${esc(c.note)}</p>` : "";
+      return `<section class="cat" id="cat-${c.id}">
         <header class="cat-head"><h3>${esc(c.title)}</h3>${c.badge ? `<span class="badge">${esc(c.badge)}</span>` : ""}</header>
-        ${c.note ? `<p class="cat-note">${esc(c.note)}</p>` : ""}
+        ${note}
         ${body}
       </section>`;
     }).join("");
+    activeCat = null;
   }
 
+  // ---------- Filialansicht ----------
   function renderStore(slug) {
     const store = STORES[slug];
     const root = $("#filiale");
@@ -135,7 +140,7 @@
     $(".store-tagline", root).hidden = !store.tagline;
 
     $(".store-actions", root).innerHTML = `
-      <button class="btn btn-primary" data-order="${slug}">Jetzt bestellen</button>
+      <button class="btn btn-primary" data-order="${slug}">Bestellen</button>
       <a class="btn btn-soft" href="tel:${store.phone}">${ICONS.phone} ${esc(store.phoneDisplay)}</a>`;
 
     $(".addr", root).innerHTML = `${esc(store.street)}<br>${esc(store.city)}`;
@@ -165,6 +170,53 @@
     if (root.dataset.store) paintStatus($(".status", root), statusOf(STORES[root.dataset.store]));
   }
 
+  // ---------- Kategorien: sofort markieren, ruckelfrei scrollen ----------
+  let activeCat = null;
+  let lockUntil = 0;
+  const headerOffset = () => $(".topbar").offsetHeight + $(".cats").offsetHeight + 8;
+
+  function setActiveCat(id) {
+    if (id === activeCat) return;
+    activeCat = id;
+    const bar = $(".cats");
+    $$("a", bar).forEach((a) => {
+      const on = a.dataset.cat === id;
+      a.classList.toggle("active", on);
+      // Nur die Leiste seitlich verschieben – nie die ganze Seite.
+      if (on) bar.scrollTo({ left: a.offsetLeft - (bar.clientWidth - a.offsetWidth) / 2, behavior });
+    });
+  }
+
+  function jumpToCat(id) {
+    const sec = document.getElementById(`cat-${id}`);
+    if (!sec) return;
+    setActiveCat(id);                 // sofort markieren
+    lockUntil = Date.now() + 1000;    // Scroll-Erkennung währenddessen pausieren
+    const top = sec.getBoundingClientRect().top + scrollY - headerOffset();
+    scrollTo({ top, behavior });
+  }
+
+  function updateActiveCat() {
+    if (Date.now() < lockUntil) return;
+    const secs = $$(".cat");
+    if (!secs.length || $("#filiale").hidden) return;
+    const line = headerOffset() + 10;
+    let current = secs[0].id;
+    for (const s of secs) if (s.getBoundingClientRect().top <= line) current = s.id;
+    // Am Seitenende die letzte Kategorie markieren, auch wenn sie nicht nach oben scrollen kann.
+    const atEnd = innerHeight + scrollY >= document.documentElement.scrollHeight - 4;
+    if (atEnd && $(".menu").getBoundingClientRect().bottom <= innerHeight) current = secs[secs.length - 1].id;
+    setActiveCat(current.slice(4));
+  }
+
+  let ticking = false;
+  addEventListener("scroll", () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { ticking = false; updateActiveCat(); });
+  }, { passive: true });
+  addEventListener("scrollend", () => { lockUntil = 0; });
+
   // ---------- Auswahl / Navigation ----------
   function select(slug, { scroll = true, push = true } = {}) {
     if (!STORES[slug]) return;
@@ -172,11 +224,14 @@
     $("#filiale").hidden = false;
     $(".switcher").hidden = false;
     $$(".switcher [data-select]").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.select === slug)));
-    $(".switcher").dataset.active = slug;
     $$(".pick").forEach((p) => p.classList.toggle("is-selected", p.dataset.store === slug));
     try { localStorage.setItem(STORAGE_KEY, slug); } catch (_) {}
     if (push && location.hash !== `#${slug}`) history.pushState(null, "", `#${slug}`);
-    if (scroll) $("#filiale").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    if (scroll) {
+      const top = $("#filiale").getBoundingClientRect().top + scrollY - $(".topbar").offsetHeight;
+      scrollTo({ top, behavior });
+    }
+    updateActiveCat();
   }
 
   document.addEventListener("click", (e) => {
@@ -185,29 +240,13 @@
     const ord = e.target.closest("[data-order]");
     if (ord) { e.preventDefault(); openOrder(ord.dataset.order); return; }
     const cat = e.target.closest(".cats a");
-    if (cat) {
-      e.preventDefault();
-      document.getElementById(cat.getAttribute("href").slice(1))?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    if (cat) { e.preventDefault(); jumpToCat(cat.dataset.cat); }
   });
 
-  window.addEventListener("popstate", () => {
+  addEventListener("popstate", () => {
     const slug = location.hash.slice(1);
     if (STORES[slug]) select(slug, { push: false });
   });
-
-  // Aktive Kategorie beim Scrollen hervorheben
-  const spy = new IntersectionObserver((entries) => {
-    entries.forEach((en) => {
-      if (!en.isIntersecting) return;
-      $$(".cats a").forEach((a) => {
-        const on = a.dataset.cat === en.target.id.replace("cat-", "");
-        a.classList.toggle("active", on);
-        if (on) a.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
-      });
-    });
-  }, { rootMargin: "-140px 0px -60% 0px" });
-  new MutationObserver(() => $$(".cat").forEach((c) => spy.observe(c))).observe($(".menu"), { childList: true });
 
   // ---------- Start ----------
   refreshStatus();
@@ -219,9 +258,6 @@
   } else {
     let saved = null;
     try { saved = localStorage.getItem(STORAGE_KEY); } catch (_) {}
-    if (STORES[saved]) {
-      // Zuletzt gewählte Filiale vormerken, aber die Auswahl oben zuerst zeigen.
-      $$(".pick").forEach((p) => p.classList.toggle("is-last", p.dataset.store === saved));
-    }
+    if (STORES[saved]) $$(".pick").forEach((p) => p.classList.toggle("is-selected", p.dataset.store === saved));
   }
 })();

@@ -13,13 +13,14 @@ const BASE_MENU = [
   {
     id: "klassiker",
     title: "Klassiker",
-    note: `Wähle deine Füllung: ${FILLINGS.join(", ")} – mit Salat und Soße.`,
+    tiles: true,
+    fillings: true,
     items: [
-      { name: "Bread", desc: "Im knusprigen Fladenbrot", price: "8,00", extras: [["Big", "+ 1,50"], ["Vollkorn", "+ 1,10"]], emoji: "🥙" },
-      { name: "Dürüm", desc: "In der dünnen Teigrolle", price: "9,00", emoji: "🌯" },
-      { name: "Lahmacun gerollt", desc: "Türkische Pizza, gefüllt und gerollt", price: "9,00", emoji: "🫓" },
-      { name: "Sandwich", desc: "Im Sandwichbrot", price: "8,50", emoji: "🥪" },
-      { name: "Teller", desc: "Dazu Pommes oder Reis", price: "15,00", emoji: "🍽️", highlight: true },
+      { name: "Bread", desc: "Im knusprigen Fladenbrot", price: "8,00", extras: [["Big", "+ 1,50"], ["Vollkorn", "+ 1,10"]] },
+      { name: "Dürüm", desc: "In der dünnen Teigrolle", price: "9,00" },
+      { name: "Lahmacun gerollt", desc: "Türkische Pizza, gefüllt und gerollt", price: "9,00" },
+      { name: "Sandwich", desc: "Im Sandwichbrot", price: "8,50" },
+      { name: "Teller", desc: "Dazu Pommes oder Reis", price: "15,00" },
     ],
   },
   {
@@ -39,7 +40,7 @@ const BASE_MENU = [
     id: "salat",
     title: "Salat",
     items: [
-      { name: "Garten-Salat", desc: "Mixsalat, Tomate, Gurke, rote Zwiebeln und Mais", price: "6,00", emoji: "🥗" },
+      { name: "Garten-Salat", desc: "Mixsalat, Tomate, Gurke, rote Zwiebeln und Mais", price: "6,00" },
     ],
   },
   {
@@ -58,7 +59,7 @@ const BASE_MENU = [
   {
     id: "dessert",
     title: "Dessert",
-    items: [{ name: "Baklava", desc: "1 Stück", price: "2,00", emoji: "🍯" }],
+    items: [{ name: "Baklava", desc: "1 Stück", price: "2,00" }],
   },
 ];
 
@@ -83,9 +84,9 @@ const STEAK = {
   id: "steak",
   title: "Steak Döner",
   badge: "Nur hier",
-  note: "Echtes Steakfleisch aus der Rinderfärse – frisch vom Spieß. Unser Geheimtipp!",
+  note: "Echtes Steakfleisch aus der Rinderfärse, frisch vom Spieß.",
   items: [
-    { name: "Steak Döner im Sesambrot", desc: "Mit Salat und Soße", price: null, emoji: "🥩" },
+    { name: "Steak Döner im Sesambrot", desc: "Mit Salat und Soße", price: null },
     { name: "Steak Dürüm", desc: "In der dünnen Teigrolle", price: null },
     { name: "Steak Döner Box", desc: "Mit Pommes und/oder Salat", price: null },
     { name: "Steak Döner Reis-Bowl", desc: "Auf türkischem Reis", price: null },
@@ -125,7 +126,7 @@ const STORES = {
     slug: "krumme-lanke",
     name: "Krumme Lanke",
     fullName: "Dream'z Kebab Krumme Lanke",
-    tagline: "Gemütlich wie im Wohnzimmer – mit Kinderspielecke.",
+    tagline: "Mit Sitzplätzen und Kinderspielecke.",
     station: { type: "U", line: "U3", label: "U Krumme Lanke" },
     street: "Fischerhüttenstraße 89",
     city: "14163 Berlin",
