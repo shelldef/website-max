@@ -19,3 +19,7 @@ Beim Öffnen wählt man zuerst die Filiale, danach erscheinen deren Speisekarte,
 
 ## Veröffentlichen (GitHub Pages)
 Repository → Settings → Pages → Branch wählen → Ordner `/ (root)` → Save.
+
+## Nach Änderungen
+Die Versionsnummer `?v=…` an `styles.css`, `data.js` und `app.js` (in allen HTML-Dateien) erhöhen,
+damit Browser keine alten, zwischengespeicherten Dateien verwenden.
