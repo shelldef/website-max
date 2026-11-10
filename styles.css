@@ -138,6 +138,17 @@ h1, h2, h3, h4 { font-family: var(--cond); font-weight: 700; text-transform: upp
 .cat-note { margin: 12px 0 0; color: var(--muted); }
 .cat-note strong { color: var(--white); font: 700 1.1rem var(--cond); text-transform: uppercase; letter-spacing: .04em; }
 
+/* Füllung & Soße wählen */
+.choose { display: grid; gap: 14px; margin-top: 16px; padding: 16px; background: var(--navy-2); border: 1px solid var(--line); border-radius: 8px; }
+.choose-row { display: flex; gap: 12px; align-items: flex-start; }
+.choose-step {
+  flex: none; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%;
+  background: var(--blue); color: var(--navy); font: 700 1.05rem/1 var(--cond);
+}
+.choose-label { margin: 3px 0 8px; font: 700 1.15rem/1.1 var(--cond); text-transform: uppercase; letter-spacing: .04em; color: var(--pink); }
+.choose-row:last-child .choose-label { margin-bottom: 0; color: var(--white); }
+.choose .chips li { background: var(--navy-3); }
+
 /* Klassiker wie auf der Tafel */
 .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; margin-top: 14px; }
 .tile { display: flex; flex-direction: column; padding: 16px; background: var(--navy-2); border: 1px solid var(--line); border-radius: 8px; }

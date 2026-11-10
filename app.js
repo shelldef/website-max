@@ -117,8 +117,13 @@
             <span class="row-price${it.price ? "" : " row-price-ask"}">${it.price ? `${it.price} €` : "Preis im Laden"}</span>
           </li>`).join("")}</ul>`;
       }
+      const chips = (list) => `<ul class="chips">${list.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>`;
       const note = c.fillings
-        ? `<p class="cat-note">Mit Salat und Soße. Füllung nach Wahl:<br><strong>${FILLINGS.map(esc).join(" · ")}</strong></p>`
+        ? `<div class="choose">
+            <div class="choose-row"><span class="choose-step">1</span><div><p class="choose-label">Füllung wählen</p>${chips(FILLINGS)}</div></div>
+            <div class="choose-row"><span class="choose-step">2</span><div><p class="choose-label">Soße wählen</p>${chips(SAUCES)}</div></div>
+            <div class="choose-row"><span class="choose-step">3</span><div><p class="choose-label">Brot, Dürüm, Sandwich oder Teller – immer mit frischem Salat</p></div></div>
+          </div>`
         : c.note ? `<p class="cat-note">${esc(c.note)}</p>` : "";
       return `<section class="cat" id="cat-${c.id}">
         <header class="cat-head"><h3>${esc(c.title)}</h3>${c.badge ? `<span class="badge">${esc(c.badge)}</span>` : ""}</header>
@@ -147,8 +152,6 @@
     const route = $(".route", root);
     route.href = store.maps;
     route.innerHTML = `${ICONS.map} Route planen`;
-
-    $(".sauces", root).innerHTML = SAUCES.map((s) => `<li>${esc(s)}</li>`).join("");
 
     const { day } = berlinNow();
     $(".hours", root).innerHTML = WEEK_ORDER.map((d) => {
